@@ -25,3 +25,5 @@ AWS_REGION = os.getenv("AWS_REGION")
 S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
 
 REDIS_URL = os.getenv('REDIS_URL')
+
+EMBEDDING_MODEL = os.getenv('EMBEDDING_MODEL')

@@ -5,6 +5,7 @@ class InputData(BaseModel):
     # username:str
     message:str
     conversation_id:int
+    document_id:int
     # user_id :str
 
 class ConversationInput(BaseModel):

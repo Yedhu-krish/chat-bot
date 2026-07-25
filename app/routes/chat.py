@@ -34,5 +34,4 @@ def remove_conversation(conversation_id:int,db:Session=Depends(get_db),current_u
 
 @router.post("/chat")
 def readchat(request: InputData,db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
-    return StreamingResponse(chat_service.chat(db=db,conversation_id=request.conversation_id,message=request.message,user_id=current_user.id),
-                             media_type="text/plain")
+    return StreamingResponse(chat_service.chat(db=db,conversation_id=request.conversation_id,message=request.message,user_id=current_user.id,document_id=request.document_id),media_type="text/plain")

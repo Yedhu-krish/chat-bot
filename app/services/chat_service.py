@@ -1,6 +1,8 @@
 from app.services.message_service import get_history,save_message
 from app.services.llm import get_ai_response
 from app.services.prompts import SYSTEM_PROMPT
+from app.services.conversation_service import get_user_conversation
+from app.services.document_service.rag_service import question_handling
 
 
 # def chat(user_id:str,message:str):
@@ -40,9 +42,8 @@ from app.services.prompts import SYSTEM_PROMPT
 #         yield chunk
 #     save_message(db,conversation_id=conversation.id,role="assistant",content=full_response)
 
-from app.services.conversation_service import get_user_conversation
 
-def chat(db,conversation_id:int,message:str,user_id:int):
+def chat(db,conversation_id:int,message:str,user_id:int,document_id:int):
     # user = get_or_create_user(db,username=username)
     # conversation = get_or_create_conversation(db,user_id=user.id)
     conversation = get_user_conversation(db,conversation_id=conversation_id,user_id=user_id)
@@ -56,6 +57,8 @@ def chat(db,conversation_id:int,message:str,user_id:int):
         "content":SYSTEM_PROMPT
     }]
     messages.extend(history)
+    context = question_handling(db=db,question=message,document_id=document_id)
+    messages.extend(context)
     response_stream = get_ai_response(messages)
     full_response = ""
     for chunk in response_stream:
