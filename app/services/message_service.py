@@ -1,5 +1,7 @@
 from app.database.models import User,Conversation,Message
 from sqlalchemy import select
+from app.services.conversation_service import get_user_conversation
+from fastapi import HTTPException
 
 # def get_or_create_user(db,username:str):
 #     stmnt = select(User).where(User.username == username)
@@ -47,3 +49,9 @@ def get_history(db,conversation_id:int):
             }
         )
     return data
+
+def get_conversation_messsages(db,conversation_id:int,user_id:int):
+    if not get_user_conversation(db=db,conversation_id=conversation_id,user_id=user_id):
+        raise HTTPException(status_code=404,detail="Conversation not found")
+    messages = get_history(db=db,conversation_id=conversation_id)
+    return messages

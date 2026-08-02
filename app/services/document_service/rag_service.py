@@ -1,9 +1,14 @@
-from app.services.document_service.embedding_service import generate_embedding
-from app.database.models import DocumentChunk
 from sqlalchemy import select
 
-def search_similar_chunks(db,query_embedding:list[float],document_id:int,limit:int=5) -> list[DocumentChunk]:
-    stmnt = select(DocumentChunk).where(DocumentChunk.document_id == document_id).order_by(DocumentChunk.embedding.cosine_distance(query_embedding)).limit(limit)
+from app.database.models import DocumentChunk
+from app.services.document_service.embedding_service import generate_embedding
+from app.services.document_service.document_service import get_document_ids_from_conversation
+
+
+def search_similar_chunks(db,query_embedding:list[float],document_ids:list[int],limit:int=5) -> list[DocumentChunk]:
+    if not document_ids:
+        return []
+    stmnt = select(DocumentChunk).where(DocumentChunk.document_id.in_(document_ids)).order_by(DocumentChunk.embedding.cosine_distance(query_embedding)).limit(limit)
     results = db.execute(stmnt)
     return results.scalars().all()
 
@@ -27,8 +32,9 @@ def build_rag_prompt(question:str,chunks:list[str]):
     ]
 
 
-def question_handling(db,question:str,document_id:int):
+def question_handling(db,question:str,conversation_id:int):
     query_embedding = generate_embedding(chunk=question)
     limit = 5
-    chunks = search_similar_chunks(db,query_embedding=query_embedding,document_id=document_id,limit=limit)
+    document_ids = get_document_ids_from_conversation(db=db,conversation_id=conversation_id)
+    chunks = search_similar_chunks(db,query_embedding=query_embedding,document_ids=document_ids,limit=limit)
     return build_rag_prompt(question=question,chunks=chunks)

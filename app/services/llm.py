@@ -24,6 +24,7 @@ import json
 #     return response_data["message"]["content"]
 
 def get_ai_response(messages:list[dict]):
+    print("++++",messages,"+++++++")
     response = requests.post(OLLAMA_URL,json={
         "model":"llama3.2:3b",
         "messages":messages,

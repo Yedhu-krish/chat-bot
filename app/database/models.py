@@ -31,6 +31,7 @@ class Conversation(Base):
     updated_at = Column(DateTime(timezone=True),server_default=func.now(),onupdate=func.now(),nullable=False)
     user = relationship("User",back_populates="conversations")
     messages = relationship("Message",back_populates="conversation")
+    documents = relationship("ConversationDocument",back_populates="conversation",cascade="all, delete-orphan")
 
 
 class Message(Base):
@@ -70,6 +71,7 @@ class Document(Base):
     error_message = Column(Text, nullable=True)
     user = relationship("User",back_populates="documents")
     chunks = relationship("DocumentChunk",back_populates="document")
+    conversations = relationship("ConversationDocument",back_populates="document",cascade="all, delete-orphan")
 
 class DocumentChunk(Base):
     __tablename__ = "document_chunks"
@@ -81,3 +83,13 @@ class DocumentChunk(Base):
     embedding = Column(Vector(768))
     created_at = Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
     document = relationship("Document",back_populates="chunks")
+
+class ConversationDocument(Base):
+    __tablename__ = "conversation_documents"
+
+    id = Column(Integer,primary_key=True)
+    conversation_id = Column(Integer,ForeignKey("conversations.id"))
+    document_id = Column(Integer,ForeignKey("documents.id"))
+    created_at = Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
+    conversation = relationship("Conversation",back_populates="documents")
+    document = relationship("Document",back_populates="conversations")
