@@ -1,5 +1,6 @@
-from app.database.models import Conversation
+from app.database.models import Conversation,ConversationDocument
 from sqlalchemy import select,delete
+from sqlalchemy import func
 
 
 def create_conversation(db,user_id:int,title:str=None):
@@ -10,16 +11,23 @@ def create_conversation(db,user_id:int,title:str=None):
     return conversation
 
 def get_all_user_conversations(db,user_id:int):
-    stmnt = select(Conversation).where(Conversation.user_id == user_id).order_by(Conversation.created_at)
+    stmnt = (select(
+        Conversation.id,
+        Conversation.title,
+        Conversation.created_at,
+        func.count(ConversationDocument.id).label("doc_count")).outerjoin(ConversationDocument).where(Conversation.user_id == user_id).group_by(
+            Conversation.id,
+            Conversation.title,
+            Conversation.created_at).order_by(Conversation.created_at))
     result = db.execute(stmnt)
-    conversations = result.scalars().all()
     return [
         {
-            "id": conversation.id,
-            "title":conversation.title,
-            "created_at":conversation.created_at
+            "id": row.id,
+            "title":row.title,
+            "doc_count":row.doc_count,
+            "created_at":row.created_at
         }
-        for conversation in conversations
+        for row in result
     ]
 
 def get_user_conversation(db,conversation_id:int,user_id:int):
@@ -29,17 +37,17 @@ def get_user_conversation(db,conversation_id:int,user_id:int):
     return conversation
 
 def delete_conversation(db,conversation_id:int,user_id:int):
-    stmnt = delete(Conversation).where(Conversation.id == conversation_id,Conversation.user_id==user_id)
-    db.execute(stmnt)
+    stmnt = select(Conversation).where(Conversation.id == conversation_id,Conversation.user_id == user_id)    
+    conversation = db.execute(stmnt).scalar_one_or_none()
+    if not conversation:
+        return None
+    stmnt2 = select(ConversationDocument).where(ConversationDocument.conversation_id == conversation_id)
+    links = db.execute(stmnt2).scalars().all()
+    for link in links:
+        db.delete(link.document)
+    db.delete(conversation)
     db.commit()
-    return {
-        "message": "Conversation Deleted Successfully."
+    return{
+        "message":"Conversation Deleted Successfully."
     }
-
-
-
-
-
-
-
 

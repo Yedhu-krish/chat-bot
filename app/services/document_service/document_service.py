@@ -1,6 +1,6 @@
 from sqlalchemy import select
 
-from app.database.models import Document, DocumentChunk,ConversationDocument
+from app.database.models import Document, DocumentChunk,ConversationDocument,Conversation
 
 
 def create_document(db,filename:str,s3_key:str,user_id:int,file_type:str,file_size:int,conversation_id:int):
@@ -30,15 +30,15 @@ def create_document_chunk(db,document_id:int,content:str,embedding:list[float],c
     db.add(chunk)
     return chunk
 
-def get_document_list(db,current_user):
-    stmnt = select(Document).where(Document.user_id == current_user.id)
+def get_document_list(db,conversation_id,current_user):
+    stmnt = select(ConversationDocument).join(Conversation).where(ConversationDocument.conversation_id == conversation_id,Conversation.user_id == current_user.id).order_by(ConversationDocument.created_at)
     result = db.execute(stmnt)
     files = result.scalars().all()
     return [
     {
-        "id": file.id,
-        "file_name": file.filename,
-        "status": file.status
+        "id": file.document.id,
+        "file_name": file.document.filename,
+        "created_at": file.created_at
     }
     for file in files
     ]

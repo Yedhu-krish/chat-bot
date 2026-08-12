@@ -8,7 +8,7 @@ from fastapi import UploadFile,File,Form
 from app.services.document_service.storage_service import upload_file,delete_file_from_s3
 from app.services.document_service.document_service import create_document,get_document_list
 from app.celery_app.tasks import process_document
-from app.schemas.doc import DocumentList
+from app.schemas.doc import ConversationDocumentResponse
 from fastapi.exceptions import HTTPException
 from app.services.conversation_service import get_user_conversation
 
@@ -29,6 +29,6 @@ def file_upload(conversation_id:int = Form(...),file:UploadFile=File(...),db:Ses
     process_document.delay(document_id=document.id)
     return document
 
-@doc_router.get("/documents/",response_model=list[DocumentList])
-def list_files(db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
-    return get_document_list(db=db,current_user=current_user)
+@doc_router.get("/documents/{conversation_id}",response_model=list[ConversationDocumentResponse])
+def list_files(conversation_id:int,db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
+    return get_document_list(db=db,current_user=current_user,conversation_id=conversation_id)

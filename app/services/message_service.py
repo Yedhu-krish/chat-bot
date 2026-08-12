@@ -3,31 +3,6 @@ from sqlalchemy import select
 from app.services.conversation_service import get_user_conversation
 from fastapi import HTTPException
 
-# def get_or_create_user(db,username:str):
-#     stmnt = select(User).where(User.username == username)
-#     result = db.execute(stmnt)
-#     user = result.scalar_one_or_none()
-#     if user is None:
-#         user = User(username=username)
-#         db.add(user)
-#         db.commit()
-#         db.refresh(user)
-#         return user
-#     return user
-
-
-# def get_or_create_conversation(db,user_id:str):
-#     stmnt = select(Conversation).where(Conversation.user_id == user_id)
-#     result = db.execute(stmnt)
-#     conversation = result.scalars().first()
-#     if conversation is None:
-#         conversation = Conversation(user_id=user_id)
-#         db.add(conversation)
-#         db.commit()
-#         db.refresh(conversation)
-#         return conversation
-
-#     return conversation
 
 def save_message(db,conversation_id:int,role:str,content:str):
     message = Message(conversation_id=conversation_id,role=role,content=content)
@@ -44,6 +19,7 @@ def get_history(db,conversation_id:int):
     for message in messages:
         data.append (
             {
+                "id": message.id,
                 "role":message.role,
                 "content":message.content
             }

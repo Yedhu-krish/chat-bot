@@ -1,6 +1,7 @@
 from pydantic import BaseModel
+from datetime import datetime
 
-class DocumentList(BaseModel):
+class ConversationDocumentResponse(BaseModel):
     id : int
     file_name: str
-    status :  str
+    created_at :  datetime

@@ -30,7 +30,7 @@ class Conversation(Base):
     created_at = Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
     updated_at = Column(DateTime(timezone=True),server_default=func.now(),onupdate=func.now(),nullable=False)
     user = relationship("User",back_populates="conversations")
-    messages = relationship("Message",back_populates="conversation")
+    messages = relationship("Message",back_populates="conversation",cascade="all, delete-orphan")
     documents = relationship("ConversationDocument",back_populates="conversation",cascade="all, delete-orphan")
 
 
@@ -70,7 +70,7 @@ class Document(Base):
     status = Column(SQLEnum(DocumentStatus),default=DocumentStatus.PROCESSING)
     error_message = Column(Text, nullable=True)
     user = relationship("User",back_populates="documents")
-    chunks = relationship("DocumentChunk",back_populates="document")
+    chunks = relationship("DocumentChunk",back_populates="document",cascade="all, delete-orphan")
     conversations = relationship("ConversationDocument",back_populates="document",cascade="all, delete-orphan")
 
 class DocumentChunk(Base):
