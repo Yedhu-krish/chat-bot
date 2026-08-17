@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: aibot-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aibot-backend
+    container_name: aibot-backend-container
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" #for accessing localhost from dockerized backend(for llama llm model)
+    
+  redis:
+    image: redis:7
+    container_name: aibot-redis
+
+  celery:
+    image: aibot-backend
+    container_name: aibot-celery
+    env_file:
+      - .env
+    command: uv run celery -A app.celery_app worker --loglevel=info
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  postgres_data:
