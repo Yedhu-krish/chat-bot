@@ -1,0 +1,33 @@
+.message-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.user-message,
+.assistant-message {
+    max-width: 70%;
+    padding: 10px 14px;
+    border-radius: 12px;
+}
+
+.user-message {
+    align-self: flex-start;
+    background: #dbeafe;
+}
+
+.assistant-message {
+    align-self: flex-end;
+    background: #f1f1f1;
+}
+
+.user-message strong,
+.assistant-message strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.user-message p,
+.assistant-message p {
+    margin: 0;
+}
