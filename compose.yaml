@@ -21,8 +21,8 @@ services:
       - .env
     ports:
       - "8000:8000"
-    extra_hosts:
-      - "host.docker.internal:host-gateway" #for accessing localhost from dockerized backend(for llama llm model)
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway" #for accessing localhost from dockerized backend(for llama llm model)
     
   redis:
     image: redis:7
@@ -34,8 +34,8 @@ services:
     env_file:
       - .env
     command: uv run celery -A app.celery_app worker --loglevel=info
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
 
 volumes:
   postgres_data:
