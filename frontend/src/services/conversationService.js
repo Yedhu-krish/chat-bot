@@ -1,8 +1,10 @@
 import { apiFetch } from "./api"
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 export async function getConversations() {
     const response = await apiFetch(
-        "http://127.0.0.1:8000/all-user-conversations",{
+        `${API_URL}/all-user-conversations`,{
             method:"GET",
             headers:{
                 "Content-Type":"application/json",
@@ -20,7 +22,7 @@ export async function getConversations() {
 
 export async function getConversationMessages(selectedConversationId){
     const response = await apiFetch(
-        `http://127.0.0.1:8000/conversation/${selectedConversationId}/messages`,{
+        `${API_URL}/conversation/${selectedConversationId}/messages`,{
             method:"GET",
             headers:{
                 "Content-Type":"application/json",
@@ -37,7 +39,7 @@ export async function getConversationMessages(selectedConversationId){
 
 export async function createNewConversation(title) {
     const response = await apiFetch(
-        "http://127.0.0.1:8000/new-conversation",{
+        `${API_URL}/new-conversation`,{
             method:"POST",
             headers:{
                 "Content-Type":"application/json",
@@ -57,7 +59,7 @@ export async function createNewConversation(title) {
 
 export async function DeleteConversation(conversationId) {
 
-    const response = await apiFetch(`http://127.0.0.1:8000/conversation/${conversationId}`,{
+    const response = await apiFetch(`${API_URL}/conversation/${conversationId}`,{
         method:"DELETE"
     }
     )
@@ -70,7 +72,7 @@ export async function DeleteConversation(conversationId) {
 }
 
 export async function getConversationDocuments(conversationId) {
-    const response = await apiFetch(`http://127.0.0.1:8000/documents/${conversationId}`,{
+    const response = await apiFetch(`${API_URL}/documents/${conversationId}`,{
         method:"GET"
     }
     )

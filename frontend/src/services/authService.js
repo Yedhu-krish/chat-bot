@@ -1,9 +1,11 @@
 import { apiFetch } from "./api"
+const API_URL = import.meta.env.VITE_API_URL;
+
 
 export async function signin(username,email,password) {
     
     const response = await apiFetch(
-        "http://127.0.0.1:8000/register",{
+        `${API_URL}/register`,{
             method:"POST",
             headers:{
                 "Content-Type":"application/json"
@@ -28,7 +30,7 @@ export async function login(username,password) {
     formData.append("username",username)
     formData.append("password",password)
 
-    const response = await apiFetch("http://127.0.0.1:8000/login",{
+    const response = await apiFetch(`${API_URL}/login`,{
         method:"POST",
         headers:{
             "Content-Type":"application/x-www-form-urlencoded"

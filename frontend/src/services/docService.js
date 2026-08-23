@@ -1,4 +1,5 @@
 import { apiFetch } from "./api"
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function uploadFile(selectedConversation,file) {
 
@@ -7,7 +8,7 @@ export async function uploadFile(selectedConversation,file) {
     formData.append("conversation_id",selectedConversation.id)
 
     const response = await apiFetch(
-        "http://127.0.0.1:8000/documents/upload",{
+        `${API_URL}/documents/upload`,{
             method:"POST",
             headers:{
                 Authorization:`Bearer ${localStorage.getItem("access_token")}`
