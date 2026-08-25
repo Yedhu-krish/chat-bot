@@ -1,5 +1,5 @@
 {
-    "name": "aibot-frontend",
+    "name": "chat-bot",
     "compatibility_date": "2026-08-24",
     "assets": {
       "directory": "./dist"
