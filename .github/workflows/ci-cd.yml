@@ -12,6 +12,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5
+
+      - name: Check Docker Version
+        run: docker --version 
       
-      - name: Say Hello
-        run: echo "CI Pipeline Started!"
+      - name: Build Docker Image
+        run: docker build -t aibot-backend:ci .
