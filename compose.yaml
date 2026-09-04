@@ -10,10 +10,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
   
   backend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: aibot-backend
+    image: ${BACKEND_IMAGE}
     container_name: aibot-backend-container
     env_file:
       - .env
@@ -27,7 +24,7 @@ services:
     container_name: aibot-redis
 
   celery:
-    image: aibot-backend
+    image: ${BACKEND_IMAGE}
     container_name: aibot-celery
     env_file:
       - .env
